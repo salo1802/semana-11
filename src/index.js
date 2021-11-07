@@ -1,31 +1,70 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase } from 'firebase/database';
+
 
 import { getFirebaseConfig } from './firebase-config';
-
+import { getDatabase, ref, set,child, onValue, push, get} from 'firebase/database';
 // Inicializar firebase
 const firebaseAppConfig = getFirebaseConfig();
 const firebaseApp = initializeApp(firebaseAppConfig);
+const db = getDatabase();
 
-function registrarUsuario(user){
-    // Obtener la base datos
-    const db = getDatabase();
 
-    // escribir un nuevo usuario
-}
 
 const username = document.getElementById("username");
-const password = document.getElementById("password");
-const registraBtn = document.getElementById("registrar_btn");
-console.log(username);
+const postInput = document.getElementById("postInput");
+const publicarBtn = document.getElementById("publicarBtn");
+const postCont = document.getElementById("postConteiner");
 
-const registroEvento = (e, event) => {
-    const user = {
+
+
+const publicarEvent = () => {
+ 
+
+
+    set(ref(db, "posts/"+username.value+"'s post"),{
         nombre: username.value,
-        pass: password.value
+        content: postInput.value
+    }).then(()=>{
+        
+    }).catch((error)=>{
+        alert("papi paso esto: "+ error);
+    });
+
+    const newPost = {
+       
+        nombre: username.value,
+        content: postInput.value
     }
-    const jsonObject = JSON.stringify(user);
+   // referencia.set(newPost);
+    const jsonObject = JSON.stringify(newPost);
     console.log(jsonObject);
+    let postClass = new Post(username.value,postInput.value);
+    postCont.appendChild(postClass.loadPost());
+
+   /* 
+const dbref = ref(db);
+
+get(child(dbref,"posts/"))*/
+
+
+const dbRef = ref(db, 'posts');
+onValue(dbRef, (snapshot) =>{
+    const data = snapshot.val();
+
+    snapshot.forEach((doc) => {
+       
+        let v = JSON.stringify(doc.val());
+        let pa = JSON.parse(v)
+        console.log(pa.nombre + pa.content);
+        let postClass = new Post(pa.nombre,pa.content);
+    postCont.appendChild(postClass.loadPost());
+    
+    });
+
+    console.log("lista", data);
+    });
+
+
 }
 
-registraBtn.addEventListener("click", registroEvento);
+publicarBtn.addEventListener("click", publicarEvent);
