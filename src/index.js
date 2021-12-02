@@ -1,8 +1,8 @@
 import { initializeApp } from 'firebase/app';
+import { getDatabase, ref, onValue, get,set } from 'firebase/database';
+import {  getFirebaseConfig } from './firebase-config';
+import { Post } from './Post'
 
-
-import { getFirebaseConfig } from './firebase-config';
-import { getDatabase, ref, set,child, onValue, push, get} from 'firebase/database';
 // Inicializar firebase
 const firebaseAppConfig = getFirebaseConfig();
 const firebaseApp = initializeApp(firebaseAppConfig);
@@ -19,7 +19,7 @@ const postCont = document.getElementById("postConteiner");
 
 const publicarEvent = () => {
  
-
+    postCont.innerHTML= "";
 
     set(ref(db, "posts/"+username.value+"'s post"),{
         nombre: username.value,
@@ -34,7 +34,7 @@ const publicarEvent = () => {
        
         nombre: username.value,
         content: postInput.value
-    }
+    }/*
    // referencia.set(newPost);
     const jsonObject = JSON.stringify(newPost);
     console.log(jsonObject);
@@ -47,24 +47,31 @@ const dbref = ref(db);
 get(child(dbref,"posts/"))*/
 
 
-const dbRef = ref(db, 'posts');
-onValue(dbRef, (snapshot) =>{
-    const data = snapshot.val();
-
-    snapshot.forEach((doc) => {
-       
-        let v = JSON.stringify(doc.val());
-        let pa = JSON.parse(v)
-        console.log(pa.nombre + pa.content);
-        let postClass = new Post(pa.nombre,pa.content);
-    postCont.appendChild(postClass.loadPost());
-    
-    });
-
-    console.log("lista", data);
-    });
-
+  
 
 }
 
+function cargarPost(){
+
+    
+
+    const dbref = ref(db, 'posts');
+    onValue(dbref, (snapshot) =>{
+        const data = snapshot.val();
+    
+        snapshot.forEach((doc) => {
+           console.log("entro");
+            let v = JSON.stringify(doc.val());
+            let pa = JSON.parse(v)
+            console.log(pa.nombre + pa.content);
+            let postClass = new Post(pa.nombre,pa.content);
+        postCont.appendChild(postClass.loadPost());
+        
+        });
+    
+        console.log("lista", data);
+        });
+}
+
+cargarPost();
 publicarBtn.addEventListener("click", publicarEvent);

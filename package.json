@@ -1,7 +1,7 @@
 {
-  "name": "eco_semana_10",
+  "name": "eco_semana_11",
   "version": "1.0.0",
-  "description": "Semana 10 ej",
+  "description": "Semana 11 ej",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
